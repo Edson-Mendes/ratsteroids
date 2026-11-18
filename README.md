@@ -9,4 +9,4 @@ Projeto final da disciplina Construção de Páginas Web II.
 
 Game inspirado em [Asteroids da Atari](https://pt.wikipedia.org/wiki/Asteroids).
 
-## 
+## Deploy
