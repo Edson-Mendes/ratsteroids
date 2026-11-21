@@ -1,6 +1,6 @@
 const config = {
   type: Phaser.AUTO,
-  width: 800,
+  width: 1000,
   height: 600,
   backgroundColor: "#ffffff",
   physics: {
@@ -44,31 +44,51 @@ const GAME_BUTTONS = {};
 let cat;
 let catProjectile;
 let timeProjectile = 0;
+let cockroach;
+
+// Groups
+let catProjectiles;
+let cockroachs;
 
 
 function preload() {
   this.load.image("cat", "assets/cat002.png");
   this.load.image("cat_projectile", "assets/blue_projectile03.png");
+  this.load.image("cockroach", "assets/cockroach001.png");
 }
 
 function create() {
-  cat = this.physics.add.image(400, 300, "cat");
-  cat.setDisplaySize(30, 85);
-  cat.setCollideWorldBounds(true);
-  cat.rotationLabel = ROTATION_LABEL.bottom;
-  
+  // Definindo botões do game.
   GAME_BUTTONS.keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
   GAME_BUTTONS.keyUp = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
   GAME_BUTTONS.keyDown = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
   GAME_BUTTONS.keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
   GAME_BUTTONS.keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+  
+  // Criação de grupos de objetos comuns
+  catProjectiles = this.physics.add.group();
+  cockroachs = this.physics.add.group();
+
+
+  cat = this.physics.add.image(400, 300, "cat");
+  cat.setDisplaySize(30, 85);
+  cat.setCollideWorldBounds(true);
+  cat.rotationLabel = ROTATION_LABEL.bottom;
+
+  cockroach = cockroachs.create(600, 400, "cockroach");
+  cockroach.setDisplaySize(30, 30);
+
+  this.physics.add.overlap(catProjectiles, cockroachs, hitCockroach, null, this);
+  this.physics.add.overlap(cockroachs, cat, catDamage, null, this);
 }
 
 function update() {
   if (GAME_BUTTONS.keyF.isDown && timeProjectile++ === 30) {
     // ATIRAR
     timeProjectile = 0;
-    catProjectile = this.physics.add.image(cat.x, cat.y, "cat_projectile");
+
+    catProjectile = catProjectiles.create(cat.x, cat.y, "cat_projectile");
+    // catProjectile = this.physics.add.image(cat.x, cat.y, "cat_projectile");
     catProjectile.depth = -1;
     catProjectile.setDisplaySize(17, 48);
     catProjectile.setRotation(cat._rotation);
@@ -167,4 +187,17 @@ function setVelocity(object, speed) {
     default:
       break;
   }
+}
+
+function hitCockroach(projectile, cockroach) {
+  cockroach.setTint(0xff0000);
+  cockroach.destroy();
+  projectile.destroy();
+}
+
+function catDamage(cockroach, cat) {
+  console.log("cat atingido...");
+  // this.physics.pause();
+
+  // player.setTint(0xff0000);
 }
