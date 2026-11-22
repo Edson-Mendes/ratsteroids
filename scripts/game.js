@@ -17,27 +17,17 @@ const config = {
 };
 
 const game = new Phaser.Game(config);
-const SPEED = 100;
+const CAT_SPEED = 100;
 const PROJECTILE_SPEED = 500;
 const ROTATION = Object.freeze({
-  topLeft: Math.PI * 0.75,
-  topRight: Math.PI * 1.25,
-  bottomLeft: Math.PI * 0.25,
-  bottomRight: Math.PI * 1.75,
-  top: Math.PI,
-  bottom: 0,
-  left: Math.PI * 0.5,
-  right: Math.PI * 1.5,
-});
-const ROTATION_LABEL = Object.freeze({
-  topLeft: "topLeft",
-  topRight: "topRight",
-  bottomLeft: "bottomLeft",
-  bottomRight: "bottomRight",
-  top: "top",
-  bottom: "bottom",
-  left: "left",
-  right: "right",
+  right: 0,
+  topRight: Math.PI * 1.75,
+  top: Math.PI * 1.5,
+  topLeft: Math.PI * 1.25,
+  left: Math.PI,
+  bottomLeft: Math.PI * 0.75,
+  bottom: Math.PI * 0.5,
+  bottomRight: Math.PI * 0.25,
 });
 const GAME_BUTTONS = {};
 
@@ -74,9 +64,9 @@ function create() {
   rats = this.physics.add.group();
 
   cat = this.physics.add.image(400, 300, "cat");
-  cat.setDisplaySize(30, 85);
+  cat.setDisplaySize(85, 30);
   cat.setCollideWorldBounds(true);
-  cat.rotationLabel = ROTATION_LABEL.bottom;
+  console.log(cat._rotation);
 
   cockroach = cockroachs.create(600, 400, "cockroach");
   cockroach.setDisplaySize(30, 30);
@@ -96,102 +86,46 @@ function update() {
 
     catProjectile = catProjectiles.create(cat.x, cat.y, "cat_projectile");
     catProjectile.depth = -1;
-    catProjectile.setDisplaySize(17, 48);
+    catProjectile.setDisplaySize(48, 17);
     catProjectile.setRotation(cat._rotation);
-    catProjectile.rotationLabel = cat.rotationLabel;
-    setVelocity(catProjectile, PROJECTILE_SPEED);
+    this.physics.velocityFromRotation(catProjectile._rotation, PROJECTILE_SPEED, catProjectile.body.velocity);
   }
   if (GAME_BUTTONS.keyUp.isDown && GAME_BUTTONS.keyLeft.isDown) {
     // CIMA ESQUERDA
-    cat.setVelocityY(SPEED * -1);
-    cat.setVelocityX(SPEED * -1);
     cat.setRotation(ROTATION.topLeft);
-    cat.rotationLabel = ROTATION_LABEL.topLeft;
+    this.physics.velocityFromRotation(cat._rotation, CAT_SPEED, cat.body.velocity);
   } else if (GAME_BUTTONS.keyUp.isDown && GAME_BUTTONS.keyRight.isDown) {
     // CIMA DIREITA
-    cat.setVelocityY(SPEED * -1);
-    cat.setVelocityX(SPEED);
     cat.setRotation(ROTATION.topRight);
-    cat.rotationLabel = ROTATION_LABEL.topRight;
+    this.physics.velocityFromRotation(cat._rotation, CAT_SPEED, cat.body.velocity);
   } else if (GAME_BUTTONS.keyDown.isDown && GAME_BUTTONS.keyLeft.isDown) {
     // BAIXO ESQUERDA
-    cat.setVelocityY(SPEED);
-    cat.setVelocityX(SPEED * -1);
     cat.setRotation(ROTATION.bottomLeft);
-    cat.rotationLabel = ROTATION_LABEL.bottomLeft;
+    this.physics.velocityFromRotation(cat._rotation, CAT_SPEED, cat.body.velocity);
   } else if (GAME_BUTTONS.keyDown.isDown && GAME_BUTTONS.keyRight.isDown) {
     // BAIXO DIREITA
-    cat.setVelocityY(SPEED);
-    cat.setVelocityX(SPEED);
     cat.setRotation(ROTATION.bottomRight);
-    cat.rotationLabel = ROTATION_LABEL.bottomRight;
+    this.physics.velocityFromRotation(cat._rotation, CAT_SPEED, cat.body.velocity);
   } else if (GAME_BUTTONS.keyUp.isDown) {
     // CIMA
-    cat.setVelocityY(SPEED * -1);
-    cat.setVelocityX(0);
     cat.setRotation(ROTATION.top);
-    cat.rotationLabel = ROTATION_LABEL.top;
+    this.physics.velocityFromRotation(cat._rotation, CAT_SPEED, cat.body.velocity);
   } else if (GAME_BUTTONS.keyDown.isDown) {
     // BAIXO
-    cat.setVelocityY(SPEED);
-    cat.setVelocityX(0);
     cat.setRotation(ROTATION.bottom);
-    cat.rotationLabel = ROTATION_LABEL.bottom;
+    this.physics.velocityFromRotation(cat._rotation, CAT_SPEED, cat.body.velocity);
   } else if (GAME_BUTTONS.keyLeft.isDown) {
     // ESQUERDA
-    cat.setVelocityY(0);
-    cat.setVelocityX(SPEED * -1);
     cat.setRotation(ROTATION.left);
-    cat.rotationLabel = ROTATION_LABEL.left;
+    this.physics.velocityFromRotation(cat._rotation, CAT_SPEED, cat.body.velocity);
   } else if (GAME_BUTTONS.keyRight.isDown) {
     // DIREITA
-    cat.setVelocityY(0);
-    cat.setVelocityX(SPEED);
     cat.setRotation(ROTATION.right);
-    cat.rotationLabel = ROTATION_LABEL.right;
+    this.physics.velocityFromRotation(cat._rotation, CAT_SPEED, cat.body.velocity);
   } else {
     // PARADO
     cat.setVelocityX(0);
     cat.setVelocityY(0);
-  }
-}
-
-function setVelocity(object, speed) {
-  switch (object.rotationLabel) {
-    case ROTATION_LABEL.topLeft:
-      object.setVelocityY(speed * -1);
-      object.setVelocityX(speed * -1);
-      break;
-    case ROTATION_LABEL.topRight:
-      object.setVelocityY(speed * -1);
-      object.setVelocityX(speed);
-      break;
-    case ROTATION_LABEL.bottomRight:
-      object.setVelocityY(speed);
-      object.setVelocityX(speed);
-      break;
-    case ROTATION_LABEL.bottomLeft:
-      object.setVelocityY(speed);
-      object.setVelocityX(speed * -1);
-      break;
-    case ROTATION_LABEL.top:
-      object.setVelocityY(speed * -1);
-      object.setVelocityX(0);
-      break;
-    case ROTATION_LABEL.bottom:
-      object.setVelocityY(speed);
-      object.setVelocityX(0);
-      break;
-    case ROTATION_LABEL.left:
-      object.setVelocityY(0);
-      object.setVelocityX(speed * -1);
-      break;
-    case ROTATION_LABEL.right:
-      object.setVelocityY(0);
-      object.setVelocityX(speed);
-      break;
-    default:
-      break;
   }
 }
 
@@ -201,7 +135,7 @@ function hitEnemy(projectile, cockroach) {
   projectile.destroy();
 }
 
-function catDamage(cockroach, cat) {
+function catDamage(enemy, cat) {
   console.log("cat atingido...");
   // this.physics.pause();
 
