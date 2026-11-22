@@ -45,16 +45,19 @@ let cat;
 let catProjectile;
 let timeProjectile = 0;
 let cockroach;
+let rat;
 
 // Groups
 let catProjectiles;
 let cockroachs;
+let rats;
 
 
 function preload() {
   this.load.image("cat", "assets/cat002.png");
   this.load.image("cat_projectile", "assets/blue_projectile03.png");
   this.load.image("cockroach", "assets/cockroach001.png");
+  this.load.image("rat", "assets/rat001.png");
 }
 
 function create() {
@@ -68,7 +71,7 @@ function create() {
   // Criação de grupos de objetos comuns
   catProjectiles = this.physics.add.group();
   cockroachs = this.physics.add.group();
-
+  rats = this.physics.add.group();
 
   cat = this.physics.add.image(400, 300, "cat");
   cat.setDisplaySize(30, 85);
@@ -78,7 +81,11 @@ function create() {
   cockroach = cockroachs.create(600, 400, "cockroach");
   cockroach.setDisplaySize(30, 30);
 
-  this.physics.add.overlap(catProjectiles, cockroachs, hitCockroach, null, this);
+  rat = rats.create(200, 100, "rat");
+  rat.setDisplaySize(24, 57);
+
+  this.physics.add.overlap(catProjectiles, cockroachs, hitEnemy, null, this);
+  this.physics.add.overlap(catProjectiles, rats, hitEnemy, null, this);
   this.physics.add.overlap(cockroachs, cat, catDamage, null, this);
 }
 
@@ -88,7 +95,6 @@ function update() {
     timeProjectile = 0;
 
     catProjectile = catProjectiles.create(cat.x, cat.y, "cat_projectile");
-    // catProjectile = this.physics.add.image(cat.x, cat.y, "cat_projectile");
     catProjectile.depth = -1;
     catProjectile.setDisplaySize(17, 48);
     catProjectile.setRotation(cat._rotation);
@@ -189,7 +195,7 @@ function setVelocity(object, speed) {
   }
 }
 
-function hitCockroach(projectile, cockroach) {
+function hitEnemy(projectile, cockroach) {
   cockroach.setTint(0xff0000);
   cockroach.destroy();
   projectile.destroy();
