@@ -89,10 +89,14 @@ function preload() {
   this.load.image("cat_projectile", "assets/blue_projectile03.png");
   this.load.image("cockroach", "assets/cockroach001.png");
   this.load.image("rat", "assets/rat001.png");
+  this.load.image("grass", "assets/background004.jpg");
 }
 
 // CREATE
 function create() {
+  // background
+  let grass = this.physics.add.image(500, 300, "grass");
+  grass.depth = -5;
   // Definindo botões do game.
   GAME_BUTTONS.keyF = this.input.keyboard.addKey(
     Phaser.Input.Keyboard.KeyCodes.F,
@@ -126,6 +130,7 @@ function create() {
   this.physics.add.overlap(catProjectiles, rats, hitEnemy, null, this);
   this.physics.add.overlap(cockroachs, cat, catDamage, null, this);
   this.physics.add.overlap(rats, cat, catDamage, null, this);
+
 }
 
 // UPDATE
