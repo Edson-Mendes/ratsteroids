@@ -9,7 +9,7 @@ const config = {
       debug: false,
     },
   },
-  scene: [GameScene],
+  scene: [StartScene, GameScene],
 };
 
 // Começar jogo
