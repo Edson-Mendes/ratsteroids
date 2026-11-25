@@ -1,4 +1,3 @@
-// Carrega o ranking do localStorage, se não existir ranking devolve um ranking padrão
 function loadRanking() {
   let ranking = JSON.parse(localStorage.getItem("ranking"));
   if (ranking == undefined) {

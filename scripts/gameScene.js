@@ -65,6 +65,12 @@ class GameScene extends Phaser.Scene {
 
     this.enemyAmount = 0;
     this.maxEnemyAmount = 100;
+    this.catLife = 7;
+    this.catLifeText = undefined;
+    this.hitTime = 0;
+    this.isHited = false;
+
+    this.cat = undefined;
   }
 
   init(date) {}
@@ -82,9 +88,12 @@ class GameScene extends Phaser.Scene {
     let grass = this.physics.add.image(500, 300, "grass");
     grass.depth = -5;
 
-    // criação do objeto score da tela
-    this.scoreText = this.add.text(16, 16, "score: 0", {
-      fontSize: "32px",
+    this.scoreText = this.add.text(16, 16, "Score: 0", {
+      fontSize: "24px",
+      fill: "#fff",
+    });
+    this.catLifeText = this.add.text(16, 48, "Life: " + this.catLife, {
+      fontSize: "24px",
       fill: "#fff",
     });
 
@@ -142,6 +151,10 @@ class GameScene extends Phaser.Scene {
   }
 
   update() {
+    if (this.isHited && this.hitTime-- == 0) {
+      this.isHited = false;
+      this.cat.setTint(0xffffff);
+    }
     if (
       this.GAME_BUTTONS.keyF.isDown &&
       this.timeProjectile++ === this.projectileCooldown
@@ -264,15 +277,19 @@ class GameScene extends Phaser.Scene {
     enemy.setTint(0xff0000);
     enemy.destroy();
     projectile.destroy();
-    this.score += 10;
-    this.scoreText.setText("Score: " + this.score);
+    this.incrementScore(10);
   }
 
   catDamage(cat, enemy) {
     console.log("cat atingido...");
-    // this.physics.pause();
 
+    enemy.destroy();
     cat.setTint(0xff0000);
+    this.hitTime = 30;
+    this.isHited = true;
+    this.catLife--;
+    this.catLifeText.setText("Life: " + this.catLife);
+    this.incrementScore(10);
   }
 
   spawnEnemy(enemyGroup, enemyInfo, enemyLocation, physics) {
@@ -292,5 +309,10 @@ class GameScene extends Phaser.Scene {
       enemyInfo.speed,
       enemy.body.velocity,
     );
+  }
+
+  incrementScore(increment) {
+    this.score += increment;
+    this.scoreText.setText("Score: " + this.score);
   }
 }
