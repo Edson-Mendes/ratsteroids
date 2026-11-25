@@ -63,8 +63,6 @@ class GameScene extends Phaser.Scene {
     this.enemySpawnTime = 0;
     this.enemySpawnCooldown = 50;
 
-    this.enemyAmount = 0;
-    this.maxEnemyAmount = 100;
     this.catLife = 7;
     this.catLifeText = undefined;
     this.hitTime = 0;
@@ -75,7 +73,7 @@ class GameScene extends Phaser.Scene {
 
   init(date) {
     console.log("CHAMANDO INIT...");
-    
+
     this.scoreText = 0;
     this.score = 0;
     this.GAME_BUTTONS = {};
@@ -138,8 +136,6 @@ class GameScene extends Phaser.Scene {
     this.enemySpawnTime = 0;
     this.enemySpawnCooldown = 50;
 
-    this.enemyAmount = 0;
-    this.maxEnemyAmount = 100;
     this.catLife = 7;
     this.catLifeText = undefined;
     this.hitTime = 0;
@@ -157,8 +153,6 @@ class GameScene extends Phaser.Scene {
   }
 
   create() {
-    console.log("CHAMANDO CREATE...");
-
     // background
     let grass = this.physics.add.image(500, 300, "grass");
     grass.depth = -5;
@@ -329,20 +323,17 @@ class GameScene extends Phaser.Scene {
       this.cat.setVelocityX(0);
       this.cat.setVelocityY(0);
     }
-    if (this.enemySpawnTime++ === this.enemySpawnCooldown) {
+    if (this.enemySpawnTime++ > this.enemySpawnCooldown) {
       this.enemySpawnTime = 0;
-      if (this.enemyAmount < this.maxEnemyAmount) {
-        this.enemyAmount++;
-        const enemyLocation =
-          this.ENEMY_SPAWN_LOCATION[
-            Phaser.Math.Between(0, this.ENEMY_SPAWN_LOCATION.length - 1)
-          ];
-        const index = Phaser.Math.Between(0, this.enemyGroups.length - 1);
-        const enemyGroup = this.enemyGroups[index];
-        const enemyInfo = this.enemiesInfo[index];
+      const enemyLocation =
+        this.ENEMY_SPAWN_LOCATION[
+          Phaser.Math.Between(0, this.ENEMY_SPAWN_LOCATION.length - 1)
+        ];
+      const index = Phaser.Math.Between(0, this.enemyGroups.length - 1);
+      const enemyGroup = this.enemyGroups[index];
+      const enemyInfo = this.enemiesInfo[index];
 
-        this.spawnEnemy(enemyGroup, enemyInfo, enemyLocation, this.physics);
-      }
+      this.spawnEnemy(enemyGroup, enemyInfo, enemyLocation, this.physics);
     }
   }
 
@@ -352,6 +343,34 @@ class GameScene extends Phaser.Scene {
     enemy.destroy();
     projectile.destroy();
     this.incrementScore(10);
+    if (this.score === 100) {
+      this.enemySpawnCooldown = 10;
+      this.enemySpawnTime = 0;
+    }
+    switch (this.score) {
+      case 100:
+        this.enemySpawnCooldown = 40;
+        this.enemySpawnTime = 0;
+        break;
+      case 200:
+        this.enemySpawnCooldown = 30;
+        this.enemySpawnTime = 0;
+        break;
+      case 400:
+        this.enemySpawnCooldown = 20;
+        this.enemySpawnTime = 0;
+        break;
+      case 700:
+        this.enemySpawnCooldown = 15;
+        this.enemySpawnTime = 0;
+        break;
+      case 1000:
+        this.enemySpawnCooldown = 10;
+        this.enemySpawnTime = 0;
+        break;
+      default:
+        break;
+    }
   }
 
   catDamage(cat, enemy) {
@@ -361,7 +380,7 @@ class GameScene extends Phaser.Scene {
     this.isHited = true;
     this.catLife--;
     this.catLifeText.setText("Life: " + this.catLife);
-    this.incrementScore(10);
+    this.incrementScore(5);
     if (this.catLife == 0) {
       this.physics.pause();
       this.scene.start("GameOverScene", { score: this.score });

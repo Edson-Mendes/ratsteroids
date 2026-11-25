@@ -19,7 +19,7 @@ class StartScene extends Phaser.Scene {
     grass.depth = -5;
 
     const commandsMessage = `
-        F para atirar
+      Segure F para atirar
       \u2190\u2191\u2192\u2193 para se mover
     `;
 
