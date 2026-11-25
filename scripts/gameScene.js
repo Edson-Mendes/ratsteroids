@@ -73,7 +73,80 @@ class GameScene extends Phaser.Scene {
     this.cat = undefined;
   }
 
-  init(date) {}
+  init(date) {
+    console.log("CHAMANDO INIT...");
+    
+    this.scoreText = 0;
+    this.score = 0;
+    this.GAME_BUTTONS = {};
+    this.ROTATION = Object.freeze({
+      right: 0,
+      bottomRight: Math.PI * 0.25,
+      bottom: Math.PI * 0.5,
+      bottomLeft: Math.PI * 0.75,
+      left: Math.PI,
+      topLeft: Math.PI * 1.25,
+      top: Math.PI * 1.5,
+      topRight: Math.PI * 1.75,
+    });
+    this.CAT_SPEED = 200;
+    this.PROJECTILE_SPEED = 600;
+    this.ENEMY_SPAWN_LOCATION = [
+      {
+        x: 50,
+        y: 50,
+        angleRange: [10, 80],
+      },
+      {
+        x: 950,
+        y: 50,
+        angleRange: [100, 170],
+      },
+      {
+        x: 50,
+        y: 550,
+        angleRange: [280, 350],
+      },
+      {
+        x: 950,
+        y: 550,
+        angleRange: [190, 260],
+      },
+    ];
+
+    this.catProjectiles = undefined;
+    this.cockroachs = undefined;
+    this.rats = undefined;
+    this.enemyGroups = [];
+    this.enemiesInfo = [
+      {
+        key: "cockroach",
+        sizeX: 30,
+        sizeY: 30,
+        speed: 300,
+      },
+      {
+        key: "rat",
+        sizeX: 48,
+        sizeY: 20,
+        speed: 300,
+      },
+    ];
+
+    this.timeProjectile = 0;
+    this.projectileCooldown = 30;
+    this.enemySpawnTime = 0;
+    this.enemySpawnCooldown = 50;
+
+    this.enemyAmount = 0;
+    this.maxEnemyAmount = 100;
+    this.catLife = 7;
+    this.catLifeText = undefined;
+    this.hitTime = 0;
+    this.isHited = false;
+
+    this.cat = undefined;
+  }
 
   preload() {
     this.load.image("cat", "assets/cat002.png");
@@ -84,6 +157,8 @@ class GameScene extends Phaser.Scene {
   }
 
   create() {
+    console.log("CHAMANDO CREATE...");
+
     // background
     let grass = this.physics.add.image(500, 300, "grass");
     grass.depth = -5;
@@ -258,7 +333,6 @@ class GameScene extends Phaser.Scene {
       this.enemySpawnTime = 0;
       if (this.enemyAmount < this.maxEnemyAmount) {
         this.enemyAmount++;
-        console.log("criando inimigo...");
         const enemyLocation =
           this.ENEMY_SPAWN_LOCATION[
             Phaser.Math.Between(0, this.ENEMY_SPAWN_LOCATION.length - 1)
@@ -281,8 +355,6 @@ class GameScene extends Phaser.Scene {
   }
 
   catDamage(cat, enemy) {
-    console.log("cat atingido...");
-
     enemy.destroy();
     cat.setTint(0xff0000);
     this.hitTime = 30;
@@ -290,6 +362,10 @@ class GameScene extends Phaser.Scene {
     this.catLife--;
     this.catLifeText.setText("Life: " + this.catLife);
     this.incrementScore(10);
+    if (this.catLife == 0) {
+      this.physics.pause();
+      this.scene.start("GameOverScene", { score: this.score });
+    }
   }
 
   spawnEnemy(enemyGroup, enemyInfo, enemyLocation, physics) {

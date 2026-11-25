@@ -3,28 +3,32 @@ function loadRanking() {
   if (ranking == undefined) {
     ranking = [
       {
-        name: "AAAAA",
+        name: "AAAAAAAAAA",
         score: 500,
       },
       {
-        name: "BBBBB",
+        name: "BBBBBBBBBB",
         score: 400,
       },
       {
-        name: "CCCCC",
+        name: "CCCCCCCCCC",
         score: 300,
       },
       {
-        name: "DDDDD",
+        name: "DDDDDDDDDD",
         score: 150,
       },
       {
-        name: "EEEEE",
+        name: "EEEEEEEEEE",
         score: 75,
       },
     ];
   }
   return ranking;
+}
+
+function saveRanking(ranking) {
+  localStorage.setItem("ranking", JSON.stringify(ranking));
 }
 
 function rankingToString(ranking) {

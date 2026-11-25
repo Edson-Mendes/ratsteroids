@@ -10,3 +10,18 @@ body {
 .title {
   color: white;
 }
+
+.input {
+    position: absolute;
+    left: 50%;
+    top: 60%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    padding: 10px;
+    font-size: 18px;
+}
+
+input:focus,
+input:focus-visible {
+    outline: none;
+}
