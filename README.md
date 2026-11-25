@@ -10,3 +10,5 @@ Projeto final da disciplina Construção de Páginas Web II.
 Game inspirado em [Asteroids da Atari](https://pt.wikipedia.org/wiki/Asteroids).
 
 ## Deploy
+
+Deploy no Github pages: [Ratsteroids](https://edson-mendes.github.io/ratsteroids/ratsteroids.html)
